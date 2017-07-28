@@ -16,6 +16,7 @@ The Firebase online console can be found [here](https://console.firebase.google.
 
 ## Resources to check out!
 *   Native looking webapps with 1 file! - [manifest.json is a new standard](https://developers.google.com/web/updates/2014/11/Support-for-installable-web-apps-with-webapp-manifest-in-chrome-38-for-Android#telling_the_browser_about_your_manifest). You can find it in `app/public/manifest.json`. It even allows you to have a popup banner that prompts the user to install it, [as seen here](https://developers.google.com/web/fundamentals/engage-and-retain/app-install-banners/).
+*   [Progressive Web Apps](https://developers.google.com/web/progressive-web-apps/) - Create-React-App includes all the tools for a PWA by default. The manifest.json as described above is part of this. I suggest we only utilise the manifest.json to save time. [But this does other things already by default so it's important to read](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md#making-a-progressive-web-app).
 *   [Firebase](https://firebase.google.com/products/) - look at all those tools! Super simple, no servers!
 *   [Cloud Functions](https://firebase.google.com/docs/functions/) - random JS functions through HTTPS
 *   [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/) - Cross-platform notifications
