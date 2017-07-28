@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "repository": "https://github.com/jthegedus/2017-au-govhack.git",
   "scripts": {
+    "precommit": "lint-staged",
     "dev": "cd \"app\" && yarn && yarn start",
     "build-firebase": "cd \"functions\" && yarn",
     "build-app": "cd \"app\" && yarn && yarn build",
@@ -11,5 +12,15 @@
     "deploy": "firebase deploy",
     "preserve": "yarn build-all",
     "serve": "firebase serve"
+  },
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^4.0.2"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
