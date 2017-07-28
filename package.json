@@ -1,0 +1,15 @@
+{
+  "name": "2017-au-govhack",
+  "version": "1.0.0",
+  "repository": "https://github.com/jthegedus/2017-au-govhack.git",
+  "scripts": {
+    "dev": "cd \"app\" && yarn && yarn start",
+    "build-firebase": "cd \"functions\" && yarn",
+    "build-app": "cd \"app\" && yarn && yarn build",
+    "build-all": "yarn build-app && yarn build-firebase",
+    "predeploy": "yarn build-all",
+    "deploy": "firebase deploy",
+    "preserve": "yarn build-all",
+    "serve": "firebase serve"
+  }
+}
