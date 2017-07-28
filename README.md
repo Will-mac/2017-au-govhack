@@ -12,12 +12,21 @@ Since we need to send out notifications on a schedule, I think the best way to a
 1. the Cloud Function triggered every hour, check the DB for users who wish to be notified, and then trigger the group FCM for all of those users.
 2. we can add the user's to an FCM topic for their garbage collection day when they register with the app and just trigger a notification to that topic. When they update their information we can just re-register them to the appropriate topic (instead of having to track stuff in a DB).
 
+Other resources to read about:
+
+*   Native looking webapps with 1 file! - [manifest.json is a new standard](https://developers.google.com/web/updates/2014/11/Support-for-installable-web-apps-with-webapp-manifest-in-chrome-38-for-Android#telling_the_browser_about_your_manifest). You can find it in `app/public/manifest.json`.
+*   [Firebase](https://firebase.google.com/products/) - look at all those tools! Super simple, no servers!
+*   [Cloud Functions](https://firebase.google.com/docs/functions/) - random JS functions through HTTPS
+*   [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/) - Cross-platform notifications
+*   [Firebase Authentication](https://firebase.google.com/docs/auth/) - Supports all the social logins, email and anonymous
+
 ## Local Project Setup
 Clone the repo from here: https://github.com/jthegedus/2017-au-govhack
 
 ### Installation of resources
-1. Install [nvm]()
-2. Install [Yarn]()
+1. Install [nvm](https://github.com/creationix/nvm#installation)
+  *   Install Node with `nvm i --lts`
+2. Install [Yarn](https://yarnpkg.com/en/docs/install)
 3. `yarn global add firebase-tools`
 4. Navigate to the repo and run `firebase login`
 5. Run `yarn build-all` to install all dependencies
