@@ -1,6 +1,8 @@
 # 2017 GovHack Australia - Team XYZ
 ABC is a garbage collection notification system. Users can signup for reminders about what day their rubbish, recycling and greens are to be collected.
 
+Created with [Firebase](firebase.com) and [Create-React-App](https://github.com/facebookincubator/create-react-app).
+
 **SUGGESTIONS FROM JAMES - We can totally do something else, just I imagine this to be the quickest route to getting something completed**
 
 We can use [Firebase Authentication](https://firebase.google.com/docs/auth/) to get people to login so we can identify them (It does support anon logins too if we don't want people to use a social login). Once we have that we can use [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging/) to perform our notifications instead of SMS. This is better because it is **FREE** to send messages and they can send to any platform (iOS, Android, Web Browsers). We can trigger the sending of the notifications with a simple and small [Cloud Function](https://firebase.google.com/docs/functions/). 
@@ -24,7 +26,7 @@ Clone the repo from here: https://github.com/jthegedus/2017-au-govhack
 
 ### Installation of resources
 1. Install [nvm](https://github.com/creationix/nvm#installation)
-  *   Install Node with `nvm i --lts`
+    *   Install Node with `nvm i --lts`
 2. Install [Yarn](https://yarnpkg.com/en/docs/install)
 3. `yarn global add firebase-tools`
 4. Navigate to the repo and run `firebase login`
