@@ -6,8 +6,8 @@ const secureCompare = require("secure-compare")
 admin.initializeApp(functions.config().firebase)
 
 exports.registerUser = functions.https.onRequest((request, response) => {
-  var path = "users/" + request.body.userId + "/";
-  var reference = admin.database().ref(path);
+  var path = "users/" + request.body.userId + "/"
+  var reference = admin.database().ref(path)
   reference.set(
     {
       userDay: request.body.userDay,
@@ -16,28 +16,70 @@ exports.registerUser = functions.https.onRequest((request, response) => {
     },
     function(error) {
       if (error) {
-        console.log("Data could not be saved." + error);
+        console.log("Data could not be saved." + error)
       } else {
-        console.log("Data saved successfully.");
+        console.log("Data saved successfully.")
       }
     }
-  );
-  response.send("User Registered successfully!");
-});
+  )
+  response.status(200)
+})
 
 exports.deleteUser = functions.https.onRequest((request, response) => {
-  var path = "users/" + request.body.userId + "/";
-  var reference = admin.database().ref(path);
+  var path = "users/" + request.body.userId + "/"
+  var reference = admin.database().ref(path)
   reference.set({}, function(error) {
     if (error) {
-      console.log("Data could not be deleted." + error);
+      console.log("Data could not be deleted." + error)
     } else {
-      console.log("Data Deleted successfully.");
+      console.log("Data Deleted successfully.")
     }
-  });
+  })
 
-  response.send("User Deleted successfully!");
-});
+  response.status(200)
+})
+
+exports.updateUser = functions.https.onRequest((request, response) => {
+  var path = "users/" + request.body.userId + "/"
+  var reference = admin.database().ref(path)
+  reference.update(
+    {
+      userDay: request.body.userDay,
+      userTime: request.body.userTime,
+      userCollectionDay: request.body.userCollectionDay
+    },
+    function(error) {
+      if (error) {
+        console.log("Data could not be updated." + error)
+      } else {
+        console.log("Data update successfully.")
+      }
+    }
+  )
+  response.send("User details updated successfully!")
+})
+
+exports.getUser = functions.https.onRequest((request, response) => {
+  var day, time, collectionDay
+  var ref = admin
+    .database()
+    .ref("users/" + request.body.userId)
+    .once("value")
+    .then(function(snapshot) {
+      day = snapshot.val().userDay
+      time = snapshot.val().userTime
+      collectionDay = snapshot.val().userCollectionDay
+
+      var responseJSON = {
+        user: request.body.userId,
+        day: day,
+        time: time,
+        collectionDay: collectionDay
+      }
+
+      response.json(responseJSON)
+    })
+})
 
 /**
  * this is called from a Zapier timed webhook - https://zapier.com/zapbook/webhook/
@@ -73,45 +115,3 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
   console.log("Triggered from Zapier")
   response.send("Notification function sent successfully!")
 })
-
-exports.updateUser = functions.https.onRequest((request, response) => {
-  var path = "users/" + request.body.userId + "/";
-  var reference = admin.database().ref(path);
-  reference.update(
-    {
-      userDay: request.body.userDay,
-      userTime: request.body.userTime,
-      userCollectionDay: request.body.userCollectionDay
-    },
-    function(error) {
-      if (error) {
-        console.log("Data could not be updated." + error);
-      } else {
-        console.log("Data update successfully.");
-      }
-    }
-  );
-  response.send("User details updated successfully!");
-});
-
-exports.getUser = functions.https.onRequest((request, response) => {
-  var day, time, collectionDay;
-  var ref = admin
-    .database()
-    .ref("users/" + request.body.userId)
-    .once("value")
-    .then(function(snapshot) {
-      day = snapshot.val().userDay;
-      time = snapshot.val().userTime;
-      collectionDay = snapshot.val().userCollectionDay;
-
-      var responseJSON = {
-        user: request.body.userId,
-        day: day,
-        time: time,
-        collectionDay: collectionDay
-      };
-
-      response.json(responseJSON);
-    });
-});
