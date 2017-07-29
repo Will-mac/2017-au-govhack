@@ -27,9 +27,10 @@ Clone the repo from here: https://github.com/jthegedus/2017-au-govhack
 1. Install [nvm](https://github.com/creationix/nvm#installation)(Unix) or [nvm](https://github.com/coreybutler/nvm-windows)(Windows)
     *   Install Node with `nvm i --lts`
 2. Install [Yarn](https://yarnpkg.com/en/docs/install)
-3. `yarn global add firebase-tools`
-4. Navigate to the repo and run `firebase login`
-5. Run `yarn build-all` to install all dependencies
+3. Clone this repo and cd into it, then run `nvm use`
+4. `yarn global add firebase-tools`
+5. Navigate to the repo and run `firebase login`
+6. Run `yarn build-all` to install all dependencies
 
 ### Development of App
 *   `yarn dev` - start development
