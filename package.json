@@ -9,6 +9,7 @@
     "build-firebase": "cd \"functions\" && yarn",
     "build-app": "cd \"app\" && yarn && yarn build",
     "build-all": "yarn build-app && yarn build-firebase",
+    "deploy-app": "yarn build-app && firebase deploy --only hosting",
     "predeploy": "yarn build-all",
     "deploy": "firebase deploy",
     "deploy-functions": "yarn build-firebase && firebase deploy --only functions",
@@ -21,9 +22,6 @@
     "prettier": "^1.5.3"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.js": ["prettier --write", "git add"]
   }
 }
