@@ -1,17 +1,19 @@
-const functions = require('firebase-functions');
+const functions = require("firebase-functions");
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
-// Trigger FCM by calling this method with a CRON job
-exports.notificationSend = functions.https.onRequest((request, response) => {
-  response.send('Notification set successfully!');
-});
+exports.registerUser = functions.https.onRequest((request, response) => {
+  var userId = request.body.userId;
+  var userDay = request.body.userDay;
+  var userTime = request.body.userTime;
+  var userCollectionDay = request.body.userCollectionDay;
 
-// Register to the CRON server with the user and datetime data
-exports.notificationRegister = functions.https.onRequest(
-  (request, response) => {
-    // send data to server or something / maybe just send to DB and then have the server CRON call the notificationSend hourly
-    response.send('Register complete');
-  }
-);
+  var a = " userId " + userId;
+  a += "  userDay " + userDay;
+  a += "  userTime " + userTime;
+  a += "  userCollectionDay " + userCollectionDay;
+  // commit the datetime
+
+  response.send("User Registered successfully!" + a);
+});

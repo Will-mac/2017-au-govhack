@@ -11,6 +11,7 @@
     "build-all": "yarn build-app && yarn build-firebase",
     "predeploy": "yarn build-all",
     "deploy": "firebase deploy",
+    "deploy-functions": "yarn build-firebase && firebase deploy --only functions",
     "preserve": "yarn build-all",
     "serve": "firebase serve"
   },
