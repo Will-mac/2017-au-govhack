@@ -24,7 +24,7 @@ The Firebase online console can be found [here](https://console.firebase.google.
 Clone the repo from here: https://github.com/jthegedus/2017-au-govhack
 
 ### Installation of resources
-1. Install [nvm](https://github.com/creationix/nvm#installation)
+1. Install [nvm](https://github.com/creationix/nvm#installation)(Unix) or [nvm](https://github.com/coreybutler/nvm-windows)(Windows)
     *   Install Node with `nvm i --lts`
 2. Install [Yarn](https://yarnpkg.com/en/docs/install)
 3. `yarn global add firebase-tools`
