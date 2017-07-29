@@ -3,12 +3,6 @@ ABC is a garbage collection notification system. Users can signup for reminders 
 
 Created with [Firebase](firebase.com) and [Create-React-App](https://github.com/facebookincubator/create-react-app).
 
-**SUGGESTIONS FROM JAMES - We can totally do something else, just I imagine this to be the quickest route to getting something completed**
-
-We can use [Firebase Authentication](https://firebase.google.com/docs/auth/) to get people to login so we can identify them (It does support anon logins too if we don't want people to use a social login). Once we have that we can use [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging/) to perform our notifications instead of SMS. This is better because it is **FREE** to send messages and they can send to any platform (iOS, Android, Web Browsers). We can trigger the sending of the notifications with a simple and small [Cloud Function](https://firebase.google.com/docs/functions/). 
-
-Since we need to send out notifications on a schedule, I think the best way to achieve this is to use a [CRON](https://github.com/firebase/functions-cron). Then we can have the Cloud Function triggered every hour, check the DB for users who wish to be notified, and then trigger the group FCM for all of those users.
-
 ## Firebase Project
 The Firebase online console can be found [here](https://console.firebase.google.com/project/au-govhack/overview).
 
