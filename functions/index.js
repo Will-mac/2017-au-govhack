@@ -6,7 +6,6 @@ const admin = require("firebase-admin");
 admin.initializeApp(functions.config().firebase);
 
 exports.registerUser = functions.https.onRequest((request, response) => {
-  // save to DB
   var path = "users/" + request.body.userId + "/";
   var reference = admin.database().ref(path);
   reference.set(
@@ -23,12 +22,10 @@ exports.registerUser = functions.https.onRequest((request, response) => {
       }
     }
   );
-
   response.send("User Registered successfully!");
 });
 
 exports.deleteUser = functions.https.onRequest((request, response) => {
-  // save to DB
   var path = "users/" + request.body.userId + "/";
   var reference = admin.database().ref(path);
   reference.set({}, function(error) {
@@ -43,7 +40,6 @@ exports.deleteUser = functions.https.onRequest((request, response) => {
 });
 
 exports.updateUser = functions.https.onRequest((request, response) => {
-  // save to DB
   var path = "users/" + request.body.userId + "/";
   var reference = admin.database().ref(path);
   reference.update(
@@ -61,4 +57,26 @@ exports.updateUser = functions.https.onRequest((request, response) => {
     }
   );
   response.send("User details updated successfully!");
+});
+
+exports.getUser = functions.https.onRequest((request, response) => {
+  var day, time, collectionDay;
+  var ref = admin
+    .database()
+    .ref("users/" + request.body.userId)
+    .once("value")
+    .then(function(snapshot) {
+      day = snapshot.val().userDay;
+      time = snapshot.val().userTime;
+      collectionDay = snapshot.val().userCollectionDay;
+
+      var responseJSON = {
+        user: request.body.userId,
+        day: day,
+        time: time,
+        collectionDay: collectionDay
+      };
+
+      response.json(responseJSON);
+    });
 });
