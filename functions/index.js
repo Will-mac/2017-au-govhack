@@ -10,15 +10,26 @@ exports.registerUser = functions.https.onRequest((request, response) => {
   var reference = admin.database().ref(path)
   reference.set(
     {
-      userDay: request.body.userDay,
-      userTime: request.body.userTime,
-      userCollectionDay: request.body.userCollectionDay
+      // User data
+      userId: request.body.userId,
+      userNotificationToken: request.body.userNotificationToken,
+
+      // notification
+      notifyTime: request.body.notifyTime,
+
+      // rubbish
+      rubbishStartTime: request.body.rubbishStartTime,
+      rubbishIntervalWeeks: reques.body.rubbishIntervalWeeks,
+
+      // recycling
+      recycleStartTime: request.body.recycleStartTime,
+      recycleIntervalWeeks: reques.body.recycleIntervalWeeks
     },
     function(error) {
       if (error) {
         console.log("Data could not be saved." + error)
       } else {
-        console.log("Data saved successfully.")
+        console.log("User Registered successfully.")
       }
     }
   )
@@ -30,9 +41,9 @@ exports.deleteUser = functions.https.onRequest((request, response) => {
   var reference = admin.database().ref(path)
   reference.set({}, function(error) {
     if (error) {
-      console.log("Data could not be deleted." + error)
+      console.log("User data could not be deleted." + error)
     } else {
-      console.log("Data Deleted successfully.")
+      console.log("User Deleted successfully.")
     }
   })
 
@@ -44,19 +55,30 @@ exports.updateUser = functions.https.onRequest((request, response) => {
   var reference = admin.database().ref(path)
   reference.update(
     {
-      userDay: request.body.userDay,
-      userTime: request.body.userTime,
-      userCollectionDay: request.body.userCollectionDay
+      // User data
+      userId: request.body.userId,
+      userNotificationToken: request.body.userNotificationToken,
+
+      // notification
+      notifyTime: request.body.notifyTime,
+
+      // rubbish
+      rubbishStartTime: request.body.rubbishStartTime,
+      rubbishIntervalWeeks: reques.body.rubbishIntervalWeeks,
+
+      // recycling
+      recycleStartTime: request.body.recycleStartTime,
+      recycleIntervalWeeks: reques.body.recycleIntervalWeeks
     },
     function(error) {
       if (error) {
-        console.log("Data could not be updated." + error)
+        console.log("User could not be updated." + error)
       } else {
-        console.log("Data update successfully.")
+        console.log("User Updated successfully.")
       }
     }
   )
-  response.send("User details updated successfully!")
+  response.status(200)
 })
 
 exports.getUser = functions.https.onRequest((request, response) => {
@@ -66,15 +88,28 @@ exports.getUser = functions.https.onRequest((request, response) => {
     .ref("users/" + request.body.userId)
     .once("value")
     .then(function(snapshot) {
-      day = snapshot.val().userDay
-      time = snapshot.val().userTime
-      collectionDay = snapshot.val().userCollectionDay
+      userNotificationToken = snapshot.val().userNotificationToken
+      notifyTime = snapshot.val().notifyTime
+      rubbishStartTime = snapshot.val().rubbishStartTime
+      rubbishIntervalWeeks = snapshot.val().rubbishIntervalWeeks
+      recycleStartTime = snapshot.val().recycleStartTime
+      recycleIntervalWeeks = snapshot.val().recycleIntervalWeeks
 
       var responseJSON = {
-        user: request.body.userId,
-        day: day,
-        time: time,
-        collectionDay: collectionDay
+        // User data
+        userId: request.body.userId,
+        userNotificationToken: request.body.userNotificationToken,
+
+        // notification
+        notifyTime: request.body.notifyTime,
+
+        // rubbish
+        rubbishStartTime: request.body.rubbishStartTime,
+        rubbishIntervalWeeks: reques.body.rubbishIntervalWeeks,
+
+        // recycling
+        recycleStartTime: request.body.recycleStartTime,
+        recycleIntervalWeeks: reques.body.recycleIntervalWeeks
       }
 
       response.json(responseJSON)
@@ -106,12 +141,12 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
       )
     return
   }
-
-  //
-
   // get current UTC time
+
   // query db for all users, filter on time by converting the userDay and userTime to UTC
+
   // call FCM with all users data
+
   console.log("Triggered from Zapier")
-  response.send("Notification function sent successfully!")
+  response.status(200)
 })
