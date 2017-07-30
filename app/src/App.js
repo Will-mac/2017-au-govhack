@@ -308,6 +308,7 @@ class App extends Component {
 
     this.firebaseApp.auth().onAuthStateChanged(user => {
       if (this.firebaseApp.auth().currentUser) {
+        this.getTokenAndSendToServer();
         this.setState({
           menuOpen: false,
           user: this.firebaseApp.auth().currentUser,
@@ -359,6 +360,7 @@ class App extends Component {
           console.log("Token obtained.");
           this.sendTokenToServer(currentToken);
 
+          this.state.data.userNotificationToken = currentToken;
           // TODO update ui
         } else {
           console.log(
@@ -467,11 +469,6 @@ class App extends Component {
           </Drawer>
 
           {this.getContent()}
-
-          <button onClick={this.getTokenAndSendToServer}>
-            Send me notifications!
-          </button>
-          <button onClick={this.deleteToken}>Delete token</button>
         </div>
       </MuiThemeProvider>
     );
