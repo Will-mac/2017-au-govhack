@@ -1,19 +1,18 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-const secureCompare = require("secure-compare");
-const express = require('express')
-const cors = require('cors')
+const functions = require("firebase-functions")
+const admin = require("firebase-admin")
+const secureCompare = require("secure-compare")
+const express = require("express")
+const cors = require("cors")
 
 // init the db with admin privileges
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp(functions.config().firebase)
 
-const registerUserServer = express();
+const registerUserServer = express()
 registerUserServer.use(cors({ origin: true }))
-registerUserServer.post('*', (request, response) => {
-
+registerUserServer.post("*", (request, response) => {
   // CLOUD FUNCTION CODE
-  var path = "users/" + request.body.userId + "/";
-  var reference = admin.database().ref(path);
+  var path = "users/" + request.body.userId + "/"
+  var reference = admin.database().ref(path)
   reference.set(
     {
       // User data
@@ -37,38 +36,36 @@ registerUserServer.post('*', (request, response) => {
     },
     function(error) {
       if (error) {
-        console.log("Data could not be saved." + error);
+        console.log("Data could not be saved." + error)
       } else {
-        console.log("User Registered successfully.");
+        console.log("User Registered successfully.")
       }
     }
-  );
-  response.status(200).send();
+  )
+  response.status(200).send()
 })
 
-const deleteUserServer = express();
+const deleteUserServer = express()
 deleteUserServer.use(cors({ origin: true }))
-deleteUserServer.post('*', (request, response) => {
-  
-  var path = "users/" + request.body.userId + "/";
-  var reference = admin.database().ref(path);
+deleteUserServer.post("*", (request, response) => {
+  var path = "users/" + request.body.userId + "/"
+  var reference = admin.database().ref(path)
   reference.set({}, function(error) {
     if (error) {
-      console.log("User data could not be deleted." + error);
+      console.log("User data could not be deleted." + error)
     } else {
-      console.log("User Deleted successfully.");
+      console.log("User Deleted successfully.")
     }
-  });
+  })
 
-  response.status(200).send();
+  response.status(200).send()
 })
 
-const updateUserServer = express();
+const updateUserServer = express()
 updateUserServer.use(cors({ origin: true }))
-updateUserServer.post('*', (request, response) => {
-  
-  var path = "users/" + request.body.userId + "/";
-  var reference = admin.database().ref(path);
+updateUserServer.post("*", (request, response) => {
+  var path = "users/" + request.body.userId + "/"
+  var reference = admin.database().ref(path)
   reference.update(
     {
       // User data
@@ -92,32 +89,31 @@ updateUserServer.post('*', (request, response) => {
     },
     function(error) {
       if (error) {
-        console.log("User could not be updated." + error);
+        console.log("User could not be updated." + error)
       } else {
-        console.log("User Updated successfully.");
+        console.log("User Updated successfully.")
       }
     }
-  );
-  response.status(200).send();
+  )
+  response.status(200).send()
 })
 
-const getUserServer = express();
+const getUserServer = express()
 getUserServer.use(cors({ origin: true }))
-getUserServer.post('*', (request, response) => {
-  
+getUserServer.post("*", (request, response) => {
   var ref = admin
     .database()
     .ref("users/" + request.body.userId)
     .once("value")
     .then(function(snapshot) {
-      userNotificationToken = snapshot.val().userNotificationToken;
-      notifyTime = snapshot.val().notifyTime;
-      latitude = snapshot.val().userLat;
-      longitude = snapshot.val().userLong;
-      rubbishStartTime = snapshot.val().rubbishStartTime;
-      rubbishIntervalWeeks = snapshot.val().rubbishIntervalWeeks;
-      recycleStartTime = snapshot.val().recycleStartTime;
-      recycleIntervalWeeks = snapshot.val().recycleIntervalWeeks;
+      userNotificationToken = snapshot.val().userNotificationToken
+      notifyTime = snapshot.val().notifyTime
+      latitude = snapshot.val().userLat
+      longitude = snapshot.val().userLong
+      rubbishStartTime = snapshot.val().rubbishStartTime
+      rubbishIntervalWeeks = snapshot.val().rubbishIntervalWeeks
+      recycleStartTime = snapshot.val().recycleStartTime
+      recycleIntervalWeeks = snapshot.val().recycleIntervalWeeks
 
       var responseJSON = {
         // User data
@@ -137,40 +133,39 @@ getUserServer.post('*', (request, response) => {
         // recycling
         recycleStartTime: recycleStartTime,
         recycleIntervalWeeks: recycleIntervalWeeks
-      };
+      }
 
-      response.json(responseJSON);
-    });
+      response.json(responseJSON)
+    })
 })
 
-
 exports.registerUser = functions.https.onRequest((request, response) => {
-   if (!request.path) {
-    request.url = "/"+request.url // prepend '/' to keep query params if any
+  if (!request.path) {
+    request.url = "/" + request.url // prepend '/' to keep query params if any
   }
-  return registerUserServer(request, response) 
-});
+  return registerUserServer(request, response)
+})
 
 exports.deleteUser = functions.https.onRequest((request, response) => {
-   if (!request.path) {
-    request.url = "/"+request.url // prepend '/' to keep query params if any
+  if (!request.path) {
+    request.url = "/" + request.url // prepend '/' to keep query params if any
   }
   return deleteUserServer(request, response)
-});
+})
 
 exports.updateUser = functions.https.onRequest((request, response) => {
-   if (!request.path) {
-    request.url = "/"+request.url // prepend '/' to keep query params if any
+  if (!request.path) {
+    request.url = "/" + request.url // prepend '/' to keep query params if any
   }
   return updateUserServer(request, response)
-});
+})
 
 exports.getUser = functions.https.onRequest((request, response) => {
-   if (!request.path) {
-    request.url = "/"+request.url // prepend '/' to keep query params if any
+  if (!request.path) {
+    request.url = "/" + request.url // prepend '/' to keep query params if any
   }
-    return getUserServer(request, response)
-});
+  return getUserServer(request, response)
+})
 
 /**
  * this is called from a Zapier timed webhook - https://zapier.com/zapbook/webhook/
@@ -180,7 +175,7 @@ exports.getUser = functions.https.onRequest((request, response) => {
  */
 exports.sendNotification = functions.https.onRequest((request, response) => {
   // check the Security Key used by 3rd Parties to trigger this function
-  const key = request.query.key;
+  const key = request.query.key
 
   // Exit if the keys don't match
   if (!secureCompare(key, functions.config().cron.key)) {
@@ -188,14 +183,14 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
       "The key provided in the request does not match the key set in the environment. Check that",
       key,
       "matches the cron.key attribute in `firebase env:get`"
-    );
+    )
     response
       .status(403)
       .send(
         'Security key does not match. Make sure your "key" URL query parameter matches the ' +
           "cron.key environment variable."
-      );
-    return;
+      )
+    return
   }
   console.log("Triggered from Zapier")
 
@@ -233,28 +228,31 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
 
   // Send notifications to all tokens.
   const invalidTokens = []
-  
-  admin.messaging().sendToDevice(tokens, payload).then(response => {
-    // For each message check if there was an error.
-    response.results.forEach((result, index) => {
-      const error = result.error
-      if (error) {
-        console.error("Failure sending notification to", tokens[index], error)
-        // Cleanup the tokens who are not registered anymore.
-        if (
-          error.code === "messaging/invalid-registration-token" ||
-          error.code === "messaging/registration-token-not-registered"
-        ) {
-          invalidTokens.push(tokens[index])
+
+  admin
+    .messaging()
+    .sendToDevice(tokens, payload)
+    .then(response => {
+      // For each message check if there was an error.
+      response.results.forEach((result, index) => {
+        const error = result.error
+        if (error) {
+          console.error("Failure sending notification to", tokens[index], error)
+          // Cleanup the tokens who are not registered anymore.
+          if (
+            error.code === "messaging/invalid-registration-token" ||
+            error.code === "messaging/registration-token-not-registered"
+          ) {
+            invalidTokens.push(tokens[index])
+          }
         }
-      }
+      })
+    })
+    .catch(error => {
+      console.log("Error Sending Message " + error)
     })
 
-  }).catch(error) {
-    console.log("Error Sending Message " + error)
-  }
-
-  // TODO: clear all invalid tokens 
+  // TODO: clear all invalid tokens
 
   response.status(200).send()
 })
