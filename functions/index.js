@@ -1,11 +1,17 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const secureCompare = require("secure-compare");
+const express = require('express')
+const cors = require('cors')
 
 // init the db with admin privileges
 admin.initializeApp(functions.config().firebase);
 
-exports.registerUser = functions.https.onRequest((request, response) => {
+const registerUserServer = express();
+registerUserServer.use(cors({ origin: true }))
+registerUserServer.post('*', (request, response) => {
+
+  // CLOUD FUNCTION CODE
   var path = "users/" + request.body.userId + "/";
   var reference = admin.database().ref(path);
   reference.set(
@@ -38,9 +44,12 @@ exports.registerUser = functions.https.onRequest((request, response) => {
     }
   );
   response.status(200).send();
-});
+})
 
-exports.deleteUser = functions.https.onRequest((request, response) => {
+const deleteUserServer = express();
+deleteUserServer.use(cors({ origin: true }))
+deleteUserServer.post('*', (request, response) => {
+  
   var path = "users/" + request.body.userId + "/";
   var reference = admin.database().ref(path);
   reference.set({}, function(error) {
@@ -52,9 +61,12 @@ exports.deleteUser = functions.https.onRequest((request, response) => {
   });
 
   response.status(200).send();
-});
+})
 
-exports.updateUser = functions.https.onRequest((request, response) => {
+const updateUserServer = express();
+updateUserServer.use(cors({ origin: true }))
+updateUserServer.post('*', (request, response) => {
+  
   var path = "users/" + request.body.userId + "/";
   var reference = admin.database().ref(path);
   reference.update(
@@ -87,9 +99,12 @@ exports.updateUser = functions.https.onRequest((request, response) => {
     }
   );
   response.status(200).send();
-});
+})
 
-exports.getUser = functions.https.onRequest((request, response) => {
+const getUserServer = express();
+getUserServer.use(cors({ origin: true }))
+getUserServer.post('*', (request, response) => {
+  
   var ref = admin
     .database()
     .ref("users/" + request.body.userId)
@@ -126,6 +141,35 @@ exports.getUser = functions.https.onRequest((request, response) => {
 
       response.json(responseJSON);
     });
+})
+
+
+exports.registerUser = functions.https.onRequest((request, response) => {
+   if (!request.path) {
+    request.url = "/"+request.url // prepend '/' to keep query params if any
+  }
+  return registerUserServer(request, response) 
+});
+
+exports.deleteUser = functions.https.onRequest((request, response) => {
+   if (!request.path) {
+    request.url = "/"+request.url // prepend '/' to keep query params if any
+  }
+  return deleteUserServer(request, response)
+});
+
+exports.updateUser = functions.https.onRequest((request, response) => {
+   if (!request.path) {
+    request.url = "/"+request.url // prepend '/' to keep query params if any
+  }
+  return updateUserServer(request, response)
+});
+
+exports.getUser = functions.https.onRequest((request, response) => {
+   if (!request.path) {
+    request.url = "/"+request.url // prepend '/' to keep query params if any
+  }
+    return getUserServer(request, response)
 });
 
 /**
