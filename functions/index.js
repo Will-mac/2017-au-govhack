@@ -231,19 +231,23 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
 
   admin
     .messaging()
-    .sendToDevice(tokens, payload)
+    .sendToDevice(userTokens, payload)
     .then(response => {
       // For each message check if there was an error.
       response.results.forEach((result, index) => {
         const error = result.error
         if (error) {
-          console.error("Failure sending notification to", tokens[index], error)
-          // Cleanup the tokens who are not registered anymore.
+          console.error(
+            "Failure sending notification to",
+            userTokens[index],
+            error
+          )
+          // Cleanup the userTokens who are not registered anymore.
           if (
             error.code === "messaging/invalid-registration-token" ||
             error.code === "messaging/registration-token-not-registered"
           ) {
-            invalidTokens.push(tokens[index])
+            invalidTokens.push(userTokens[index])
           }
         }
       })
@@ -252,7 +256,7 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
       console.log("Error Sending Message " + error)
     })
 
-  // TODO: clear all invalid tokens
+  // TODO: clear all invalid userTokens
 
   response.status(200).send()
 })
