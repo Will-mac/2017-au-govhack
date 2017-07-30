@@ -153,12 +153,64 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
       );
     return;
   }
+  console.log("Triggered from Zapier")
+
   // get current UTC time
+  const time = new Date().getTime()
 
-  // query db for all users, filter on time by converting the userDay and userTime to UTC
+  // query db for all users
+  var userTokens = []
+  var ref = admin
+    .database()
+    .ref("users/")
+    .once("value")
+    .then(function(snapshot) {
+      // now we have a reference to the /users/ collection
+      snapshot.forEach(function(childSnapshot) {
+        var userId = childSnapshot.key
 
-  // call FCM with all users data
+        // TODO - Time calculation
 
-  console.log("Triggered from Zapier");
-  response.status(200).send();
-});
+        // ONLY add their token to the list if the filter predicate is successful
+        userTokens.push(childSnapshot.val().userNotificationToken)
+      })
+
+      console.log("User List: " + userTokens)
+    })
+
+  // Notification Payload
+  const payload = {
+    notification: {
+      title: "Absolute Rubbish",
+      body: "Your trash needs to go out tonight!",
+      icon: ""
+    }
+  }
+
+  // Send notifications to all tokens.
+  const invalidTokens = []
+  
+  admin.messaging().sendToDevice(tokens, payload).then(response => {
+    // For each message check if there was an error.
+    response.results.forEach((result, index) => {
+      const error = result.error
+      if (error) {
+        console.error("Failure sending notification to", tokens[index], error)
+        // Cleanup the tokens who are not registered anymore.
+        if (
+          error.code === "messaging/invalid-registration-token" ||
+          error.code === "messaging/registration-token-not-registered"
+        ) {
+          invalidTokens.push(tokens[index])
+        }
+      }
+    })
+
+  }).catch(error) {
+    console.log("Error Sending Message " + error)
+  }
+
+  // TODO: clear all invalid tokens 
+
+  response.status(200).send()
+})
