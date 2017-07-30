@@ -1,58 +1,62 @@
-const functions = require("firebase-functions")
-const admin = require("firebase-admin")
-const secureCompare = require("secure-compare")
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const secureCompare = require("secure-compare");
 
 // init the db with admin privileges
-admin.initializeApp(functions.config().firebase)
+admin.initializeApp(functions.config().firebase);
 
 exports.registerUser = functions.https.onRequest((request, response) => {
-  var path = "users/" + request.body.userId + "/"
-  var reference = admin.database().ref(path)
+  var path = "users/" + request.body.userId + "/";
+  var reference = admin.database().ref(path);
   reference.set(
     {
       // User data
       userId: request.body.userId,
       userNotificationToken: request.body.userNotificationToken,
 
+      //lat long
+      userLat: request.body.userLat,
+      userLong: request.body.userLong,
+
       // notification
       notifyTime: request.body.notifyTime,
 
       // rubbish
       rubbishStartTime: request.body.rubbishStartTime,
-      rubbishIntervalWeeks: reques.body.rubbishIntervalWeeks,
+      rubbishIntervalWeeks: request.body.rubbishIntervalWeeks,
 
       // recycling
       recycleStartTime: request.body.recycleStartTime,
-      recycleIntervalWeeks: reques.body.recycleIntervalWeeks
+      recycleIntervalWeeks: request.body.recycleIntervalWeeks
     },
     function(error) {
       if (error) {
-        console.log("Data could not be saved." + error)
+        console.log("Data could not be saved." + error);
       } else {
-        console.log("User Registered successfully.")
+        console.log("User Registered successfully.");
       }
     }
-  )
-  response.status(200)
-})
+  );
+  response.status(200).send();
+});
 
 exports.deleteUser = functions.https.onRequest((request, response) => {
-  var path = "users/" + request.body.userId + "/"
-  var reference = admin.database().ref(path)
+  var path = "users/" + request.body.userId + "/";
+  var reference = admin.database().ref(path);
   reference.set({}, function(error) {
     if (error) {
-      console.log("User data could not be deleted." + error)
+      console.log("User data could not be deleted." + error);
     } else {
-      console.log("User Deleted successfully.")
+      console.log("User Deleted successfully.");
     }
-  })
+  });
 
-  response.status(200)
-})
+  response.status(200).send();
+});
 
 exports.updateUser = functions.https.onRequest((request, response) => {
-  var path = "users/" + request.body.userId + "/"
-  var reference = admin.database().ref(path)
+  var path = "users/" + request.body.userId + "/";
+  var reference = admin.database().ref(path);
   reference.update(
     {
       // User data
@@ -62,59 +66,67 @@ exports.updateUser = functions.https.onRequest((request, response) => {
       // notification
       notifyTime: request.body.notifyTime,
 
+      //lat long
+      userLat: request.body.userLat,
+      userLong: request.body.userLong,
+
       // rubbish
       rubbishStartTime: request.body.rubbishStartTime,
-      rubbishIntervalWeeks: reques.body.rubbishIntervalWeeks,
+      rubbishIntervalWeeks: request.body.rubbishIntervalWeeks,
 
       // recycling
       recycleStartTime: request.body.recycleStartTime,
-      recycleIntervalWeeks: reques.body.recycleIntervalWeeks
+      recycleIntervalWeeks: request.body.recycleIntervalWeeks
     },
     function(error) {
       if (error) {
-        console.log("User could not be updated." + error)
+        console.log("User could not be updated." + error);
       } else {
-        console.log("User Updated successfully.")
+        console.log("User Updated successfully.");
       }
     }
-  )
-  response.status(200)
-})
+  );
+  response.status(200).send();
+});
 
 exports.getUser = functions.https.onRequest((request, response) => {
-  var day, time, collectionDay
   var ref = admin
     .database()
     .ref("users/" + request.body.userId)
     .once("value")
     .then(function(snapshot) {
-      userNotificationToken = snapshot.val().userNotificationToken
-      notifyTime = snapshot.val().notifyTime
-      rubbishStartTime = snapshot.val().rubbishStartTime
-      rubbishIntervalWeeks = snapshot.val().rubbishIntervalWeeks
-      recycleStartTime = snapshot.val().recycleStartTime
-      recycleIntervalWeeks = snapshot.val().recycleIntervalWeeks
+      userNotificationToken = snapshot.val().userNotificationToken;
+      notifyTime = snapshot.val().notifyTime;
+      latitude = snapshot.val().userLat;
+      longitude = snapshot.val().userLong;
+      rubbishStartTime = snapshot.val().rubbishStartTime;
+      rubbishIntervalWeeks = snapshot.val().rubbishIntervalWeeks;
+      recycleStartTime = snapshot.val().recycleStartTime;
+      recycleIntervalWeeks = snapshot.val().recycleIntervalWeeks;
 
       var responseJSON = {
         // User data
         userId: request.body.userId,
-        userNotificationToken: request.body.userNotificationToken,
+        userNotificationToken: userNotificationToken,
 
         // notification
-        notifyTime: request.body.notifyTime,
+        notifyTime: notifyTime,
+
+        latitude: latitude,
+        longitude: longitude,
 
         // rubbish
-        rubbishStartTime: request.body.rubbishStartTime,
-        rubbishIntervalWeeks: reques.body.rubbishIntervalWeeks,
+        rubbishStartTime: rubbishStartTime,
+        rubbishIntervalWeeks: rubbishIntervalWeeks,
 
         // recycling
-        recycleStartTime: request.body.recycleStartTime,
-        recycleIntervalWeeks: reques.body.recycleIntervalWeeks
-      }
+        recycleStartTime: recycleStartTime,
+        recycleIntervalWeeks: recycleIntervalWeeks
+      };
 
-      response.json(responseJSON)
-    })
-})
+      response.json(responseJSON);
+    });
+});
 
 /**
  * this is called from a Zapier timed webhook - https://zapier.com/zapbook/webhook/
@@ -124,7 +136,7 @@ exports.getUser = functions.https.onRequest((request, response) => {
  */
 exports.sendNotification = functions.https.onRequest((request, response) => {
   // check the Security Key used by 3rd Parties to trigger this function
-  const key = request.query.key
+  const key = request.query.key;
 
   // Exit if the keys don't match
   if (!secureCompare(key, functions.config().cron.key)) {
@@ -132,14 +144,14 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
       "The key provided in the request does not match the key set in the environment. Check that",
       key,
       "matches the cron.key attribute in `firebase env:get`"
-    )
+    );
     response
       .status(403)
       .send(
         'Security key does not match. Make sure your "key" URL query parameter matches the ' +
           "cron.key environment variable."
-      )
-    return
+      );
+    return;
   }
   // get current UTC time
 
@@ -147,6 +159,6 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
 
   // call FCM with all users data
 
-  console.log("Triggered from Zapier")
-  response.status(200)
-})
+  console.log("Triggered from Zapier");
+  response.status(200).send();
+});
