@@ -209,54 +209,41 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
         var userId = childSnapshot.key
 
         // TODO - Time calculation
-
-        // ONLY add their token to the list if the filter predicate is successful
+        // ONLY add user token to the list if their time notification is in the range of the last hour
         userTokens.push(childSnapshot.val().userNotificationToken)
       })
-
       console.log("User List: " + userTokens)
-    })
 
-  // Notification Payload
-  const payload = {
-    notification: {
-      title: "Absolute Rubbish",
-      body: "Your trash needs to go out tonight!",
-      icon: ""
-    }
-  }
-
-  // Send notifications to all tokens.
-  const invalidTokens = []
-
-  admin
-    .messaging()
-    .sendToDevice(userTokens, payload)
-    .then(response => {
-      // For each message check if there was an error.
-      response.results.forEach((result, index) => {
-        const error = result.error
-        if (error) {
-          console.error(
-            "Failure sending notification to",
-            userTokens[index],
-            error
-          )
-          // Cleanup the userTokens who are not registered anymore.
-          if (
-            error.code === "messaging/invalid-registration-token" ||
-            error.code === "messaging/registration-token-not-registered"
-          ) {
-            invalidTokens.push(userTokens[index])
-          }
+      // Notification Payload
+      const payload = {
+        notification: {
+          title: "Absolute Rubbish",
+          body: "Your trash needs to go out tonight!",
+          icon: ""
         }
-      })
+      }
+
+      // Send notifications to all tokens.
+      // const invalidTokens = []
+      if (userTokens.length > 0) {
+        admin
+          .messaging()
+          .sendToDevice(userTokens, payload)
+          .then(response1 => {
+            console.log("Successfully sent message: " + response1)
+            response.status(200).send()
+          })
+          .catch(error => {
+            console.log("Error Sending Message " + error)
+            response.status(400).send("Error with sending notification")
+          })
+      } else {
+        // there was no notifications to send
+        console.log("No notifications to send")
+        response.status(200).send("No notifications to send")
+      }
     })
     .catch(error => {
-      console.log("Error Sending Message " + error)
+      repsonse.status(400).send("No database user ids valid")
     })
-
-  // TODO: clear all invalid userTokens
-
-  response.status(200).send()
 })
