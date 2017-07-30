@@ -22,6 +22,10 @@
     "prettier": "^1.5.3"
   },
   "lint-staged": {
-    "*.js": ["prettier --write", "git add"]
-  }
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {}
 }
